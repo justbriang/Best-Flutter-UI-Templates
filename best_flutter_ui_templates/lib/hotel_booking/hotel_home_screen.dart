@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:best_flutter_ui_templates/hotel_booking/calendar_popup_view.dart';
 import 'package:best_flutter_ui_templates/hotel_booking/hotel_list_view.dart';
 import 'package:best_flutter_ui_templates/hotel_booking/model/hotel_list_data.dart';
@@ -15,7 +14,7 @@ class HotelHomeScreen extends StatefulWidget {
 
 class _HotelHomeScreenState extends State<HotelHomeScreen>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  AnimationController? animationController;
   List<HotelListData> hotelList = HotelListData.hotelList;
   final ScrollController _scrollController = ScrollController();
 
@@ -36,7 +35,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
 
   @override
   void dispose() {
-    animationController.dispose();
+    animationController?.dispose();
     super.dispose();
   }
 
@@ -98,16 +97,16 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                               final Animation<double> animation =
                                   Tween<double>(begin: 0.0, end: 1.0).animate(
                                       CurvedAnimation(
-                                          parent: animationController,
+                                          parent: animationController!,
                                           curve: Interval(
                                               (1 / count) * index, 1.0,
                                               curve: Curves.fastOutSlowIn)));
-                              animationController.forward();
+                              animationController?.forward();
                               return HotelListView(
                                 callback: () {},
                                 hotelData: hotelList[index],
                                 animation: animation,
-                                animationController: animationController,
+                                animationController: animationController!,
                               );
                             },
                           ),
@@ -154,16 +153,16 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                       final Animation<double> animation =
                           Tween<double>(begin: 0.0, end: 1.0).animate(
                               CurvedAnimation(
-                                  parent: animationController,
+                                  parent: animationController!,
                                   curve: Interval((1 / count) * index, 1.0,
                                       curve: Curves.fastOutSlowIn)));
-                      animationController.forward();
+                      animationController?.forward();
 
                       return HotelListView(
                         callback: () {},
                         hotelData: hotelList[index],
                         animation: animation,
-                        animationController: animationController,
+                        animationController: animationController!,
                       );
                     },
                   );
@@ -183,7 +182,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
       final Animation<double> animation =
           Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
-          parent: animationController,
+          parent: animationController!,
           curve: Interval((1 / count) * i, 1.0, curve: Curves.fastOutSlowIn),
         ),
       );
@@ -192,11 +191,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
           callback: () {},
           hotelData: hotelList[i],
           animation: animation,
-          animationController: animationController,
+          animationController: animationController!,
         ),
       );
     }
-    animationController.forward();
+    animationController?.forward();
     return Column(
       children: hotelListViews,
     );
@@ -383,7 +382,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
+                  child: Icon(FontAwesomeIcons.magnifyingGlass,
                       size: 20,
                       color: HotelAppTheme.buildLightTheme().backgroundColor),
                 ),
@@ -491,9 +490,9 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
     );
   }
 
-  void showDemoDialog({BuildContext context}) {
+  void showDemoDialog({BuildContext? context}) {
     showDialog<dynamic>(
-      context: context,
+      context: context!,
       builder: (BuildContext context) => CalendarPopupView(
         barrierDismissible: true,
         minimumDate: DateTime.now(),
@@ -502,10 +501,8 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
         initialStartDate: startDate,
         onApplyClick: (DateTime startData, DateTime endData) {
           setState(() {
-            if (startData != null && endData != null) {
-              startDate = startData;
-              endDate = endData;
-            }
+            startDate = startData;
+            endDate = endData;
           });
         },
         onCancelClick: () {},
@@ -589,7 +586,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                       onTap: () {},
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(FontAwesomeIcons.mapMarkerAlt),
+                        child: Icon(FontAwesomeIcons.locationDot),
                       ),
                     ),
                   ),

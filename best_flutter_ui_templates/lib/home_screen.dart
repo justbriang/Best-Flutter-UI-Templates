@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'model/homelist.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -11,7 +11,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List<HomeList> homeList = HomeList.homeList;
-  AnimationController animationController;
+  AnimationController? animationController;
   bool multiple = true;
 
   @override
@@ -28,14 +28,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    animationController.dispose();
+    animationController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor:
+          isLightMode == true ? AppTheme.white : AppTheme.nearlyBlack,
       body: FutureBuilder<bool>(
         future: getData(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -69,12 +72,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 final Animation<double> animation =
                                     Tween<double>(begin: 0.0, end: 1.0).animate(
                                   CurvedAnimation(
-                                    parent: animationController,
+                                    parent: animationController!,
                                     curve: Interval((1 / count) * index, 1.0,
                                         curve: Curves.fastOutSlowIn),
                                   ),
                                 );
-                                animationController.forward();
+                                animationController?.forward();
                                 return HomeListView(
                                   animation: animation,
                                   animationController: animationController,
@@ -84,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                       context,
                                       MaterialPageRoute<dynamic>(
                                         builder: (BuildContext context) =>
-                                            homeList[index].navigateScreen,
+                                            homeList[index].navigateScreen!,
                                       ),
                                     );
                                   },
@@ -113,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Widget appBar() {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isLightMode = brightness == Brightness.light;
     return SizedBox(
       height: AppBar().preferredSize.height,
       child: Row(
@@ -133,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   'Flutter UI',
                   style: TextStyle(
                     fontSize: 22,
-                    color: AppTheme.darkText,
+                    color: isLightMode ? AppTheme.darkText : AppTheme.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -145,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             child: Container(
               width: AppBar().preferredSize.height - 8,
               height: AppBar().preferredSize.height - 8,
-              color: Colors.white,
+              color: isLightMode ? Colors.white : AppTheme.nearlyBlack,
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -153,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       BorderRadius.circular(AppBar().preferredSize.height),
                   child: Icon(
                     multiple ? Icons.dashboard : Icons.view_agenda,
-                    color: AppTheme.dark_grey,
+                    color: isLightMode ? AppTheme.dark_grey : AppTheme.white,
                   ),
                   onTap: () {
                     setState(() {
@@ -172,28 +177,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
 class HomeListView extends StatelessWidget {
   const HomeListView(
-      {Key key,
+      {Key? key,
       this.listData,
       this.callBack,
       this.animationController,
       this.animation})
       : super(key: key);
 
-  final HomeList listData;
-  final VoidCallback callBack;
-  final AnimationController animationController;
-  final Animation<dynamic> animation;
+  final HomeList? listData;
+  final VoidCallback? callBack;
+  final AnimationController? animationController;
+  final Animation<double>? animation;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      animation: animationController!,
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
-          opacity: animation,
+          opacity: animation!,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation.value), 0.0),
+                0.0, 50 * (1.0 - animation!.value), 0.0),
             child: AspectRatio(
               aspectRatio: 1.5,
               child: ClipRRect(
@@ -201,9 +206,11 @@ class HomeListView extends StatelessWidget {
                 child: Stack(
                   alignment: AlignmentDirectional.center,
                   children: <Widget>[
-                    Image.asset(
-                      listData.imagePath,
-                      fit: BoxFit.cover,
+                    Positioned.fill(
+                      child: Image.asset(
+                        listData!.imagePath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Material(
                       color: Colors.transparent,
@@ -211,9 +218,7 @@ class HomeListView extends StatelessWidget {
                         splashColor: Colors.grey.withOpacity(0.2),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4.0)),
-                        onTap: () {
-                          callBack();
-                        },
+                        onTap: callBack,
                       ),
                     ),
                   ],
